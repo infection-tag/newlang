@@ -23,7 +23,7 @@ statement:
 		| 'display' expression				{ printf("%s", $2); }
 		| 'printerr' expression				{ fprintf(stderr, "%s", $2); }
 		NEWLINE
-		| expression NEWLINE				{ ; }
+		| expression NEWLINE				{ ;}
 		
 expression:
 		EXPRESSION
@@ -40,4 +40,4 @@ expression:
 		| 'IS' expression '? IF SO,' statement	{ if($2) $4; else continue; }	
 		| expression '==' expression			{ $$ = $1 == $3; }
 		| expression '%' expression				{ $$ = $1 % $3; }
-		| 
+		|  
