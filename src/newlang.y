@@ -5,6 +5,9 @@
 %}
 
 %token PLUS VARIABLE IF
+%token EQUALEQUAL EQUAL
+%token AND ANDAND OR OROR XOR XORXOR
+%token 
 %left '+' '-'
 %left "PLUS" "MINUS"
 
@@ -53,10 +56,11 @@ expression:
 		| expression '||' expression			{ $$ = $1 || $3; }
 		| expression 'OR' expression			{ $$ = $1 || $3; }
 		| expression '^^' expression			/* XOR Gate */
-		{	 $$ = ((~$1) && $3) || ((~$3) && $1); }
-		| expression '^^' expression			/* XOR Gate */
+		{ $$ = ((~$1) && $3) || ((~$3) && $1); }
+		| expression 'XOR' expression			
 		{ $$ = ((~$1) && $3) || ((~$3) && $1); }
 		| expression '!&&' expression			{ $$ = ~($1 && $3); }
+		| expression 'NAND' expression			{ $$ = ~($1 && $3); }
 		/* All Binary Gates Begin here */
 		| expression '&&' expression			{ $$ = $1 && $3; }
 		| expression '||' expression			{ $$ = $1 || $3; }
@@ -64,5 +68,5 @@ expression:
 		{ $$ = ((~$1) && $3) || ((~$3) && $1); }
 		| expression '!&&' expression			{ $$ = ~($1 && $3); }
 		INTEGER
-		| expression '^' expression				{ $$ = $1^$3; } 
+		| expression '^' expression				{ $$ = $1^$3; }
 		/* exponenets: not to be confused with XOR */
