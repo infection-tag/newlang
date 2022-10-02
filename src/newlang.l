@@ -1,5 +1,6 @@
 %{
 	#include "y.tab.h"
+	#include "algo.h"
 	#include <stdlib.h>
 	void yyerror(char*);
 %}
