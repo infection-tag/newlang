@@ -6,8 +6,11 @@
 %}
 
 %token PLUS VARIABLE IF
+%token INT CHAR TREE LINKEDLIST /* datatypes */
+%token DISPLAY NEWLINE
+%token IS IFSO IFNOT			/* "Is" something "? If So," something */
 %left '+' '-'
-%left "PLUS" "MINUS"
+%left PLUS MINUS
 
 %%
 
@@ -19,12 +22,11 @@ program:
 
 statement:
 		expression							{ continue; }
-		| 'int' expression					{ int $2; }
-		| 'char' expression					{ char $2; }
-		| 'tree' expression 				{ tree $2; }
-		| 'print' expression				{ printf("%s", $2); }
-		| 'display' expression				{ printf("%s", $2); }
-		| 'printerr' expression				{ fprintf(stderr, "%s", $2); }
+		| INT expression					{ int $2; }
+		| CHAR expression					{ char $2; }
+		| TREE expression 					{ tree $2; }
+		| DISPLAY expression				{ printf("%s", $2); }
+		| PRINTERR expression				{ fprintf(stderr, "%s", $2); }
 		NEWLINE
 		| expression NEWLINE				{ ; }
 		
