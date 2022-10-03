@@ -5,10 +5,14 @@
 	int yylex();
 %}
 
-%token PLUS VARIABLE IF
+%token PLUS MINUS TIMES DIV CARROT MOD
 %token INT CHAR TREE LINKEDLIST /* datatypes */
-%token DISPLAY NEWLINE
+%token DISPLAY NEWLINE PRINTERR
 %token IS IFSO IFNOT			/* "Is" something "? If So," something */
+%token AND NAND OR NOR XOR XNOR	/* Logic gates */
+%token EQUALS EQUALSCHECK		/* the difference between = and == */
+%token EXPRESSION INTEGER
+%token LET
 %left '+' '-'
 %left PLUS MINUS
 
@@ -25,41 +29,35 @@ statement:
 		| INT expression					{ int $2; }
 		| CHAR expression					{ char $2; }
 		| TREE expression 					{ tree $2; }
+		| LINKEDLIST expression				{ LinkedList $2; }
 		| DISPLAY expression				{ printf("%s", $2); }
 		| PRINTERR expression				{ fprintf(stderr, "%s", $2); }
 		NEWLINE
 		| expression NEWLINE				{ ; }
-		
+
 expression:
 		EXPRESSION
-		| expression '=' expression				{ $1 = $3; }
-		| expression 'EQUALS' expression		{ $1 = $3; }
-		| 'LET' expression 'EQUAL' expression	{ $1 = $3; }
-		| 'LET' expression 'BE' expression		{ $1 = $3; }
-		| expression '+' expression				{ $$ = $1 + $3; }
-		| expression 'PLUS' expression			{ $$ = $1 + $3; }
-		| expression '-' expression				{ $$ = $1 - $3; }
-		| expression 'MINUS' expression			{ $$ = $1 - $3; }
-		| expression '*' expression				{ $$ = $1 * $3; }
-		| expression 'TIMES' expression			{ $$ = $1 * $3; }
-		| 'IS' expression '? IF SO,' statement	{ if($2) $4; else continue; }
-		| expression '==' expression			{ $$ = $1 == $3; }
-		| expression '%' expression				{ $$ = $1 % $3; }
+		| expression EQUALS expression			{ $1 = $3; }
+		| LET expression EQUALS expression		{ $1 = $3; }
+		| expression PLUS expression			{ $$ = $1 + $3; }
+		| expression MINUS expression			{ $$ = $1 - $3; }
+		| expression TIMES expression			{ $$ = $1 * $3; }
+		| expression DIV expression				{ $$ = $1 / $3; }
+		| IS expression IFSO statement		
+		{ if($2) $4; else continue; }
+		| IS expression IFSO statement IFNOT statement		
+		{ if($2) $4; else $6; }
+		| IS expression IFNOT statement			
+		{ if(!$2) $4; else continue; }		
+		| expression EQUALSCHECK expression		{ $$ = $1 == $3; }
+		| expression MOD expression				{ $$ = $1 % $3; }
 		/* All Logic Gates Begin here */
-		| expression '&&' expression			{ $$ = $1 && $3; }
-		| expression 'AND' expression			{ $$ = $1 && $3; }
-		| expression '||' expression			{ $$ = $1 || $3; }
-		| expression 'OR' expression			{ $$ = $1 || $3; }
-		| expression '^^' expression			/* XOR Gate */
-		{	 $$ = ((~$1) && $3) || ((~$3) && $1); }
-		| expression '^^' expression			/* XOR Gate */
+		| expression AND expression				{ $$ = $1 && $3; }
+		| expression OR expression				{ $$ = $1 || $3; }
+		| expression XOR expression			
 		{ $$ = ((~$1) && $3) || ((~$3) && $1); }
-		| expression '!&&' expression			{ $$ = ~($1 && $3); }
+		| expression NAND expression			{ $$ = ~($1 && $3); }
 		/* All Binary Gates Begin here */
-		| expression '&&' expression			{ $$ = $1 && $3; }
-		| expression '||' expression			{ $$ = $1 || $3; }
-		| expression '^^' expression			/* XOR Gate */
-		{ $$ = ((~$1) && $3) || ((~$3) && $1); }
-		| expression '!&&' expression			{ $$ = ~($1 && $3); }
+		| expression '!&&' expression			{ $$ = ~($1 && $3); } 
 		INTEGER
-		| expression '^' expression				{ $$ = $1^$3; }
+		| expression CARROT expression				{ $$ = $1^$3; }
